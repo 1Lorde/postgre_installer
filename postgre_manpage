@@ -1,0 +1,63 @@
+.\" manpage for PostgreSQL Installer
+.\" Contact t.me/savchuk_vlad to correct errors or typos
+.TH posgtgre.py 1 "31 May 2020" "version 1.0" "PostgreSQL Installer manpage"
+
+.SH NAME
+.B PostgreSQL Installer
+- install, configure, manage and remove PostgreSQL server on CentOS.
+
+.SH SYNOPSIS
+.B postgre.py
+.RI "[" FLAG "]..."
+
+.SH DESCRIPTION
+.B postgre.py
+- use this script for installation, configuration, managing and removing PostgreSQL server in CentOS.
+.PP
+
+.SH OPTIONS
+.TP
+.B -v | --verbose
+Run script in verbose mode.
+.TP
+.B -s | --status
+Print current server status in system.
+.TP
+.B -a | --author
+Information about author.
+.TP
+.B -V | --version
+Show installed PostgreSQL version.
+.TP
+.B -h | --help
+Show this man-page.
+
+.SH EXAMPLES
+The following will show a typical usage.
+.PP
+.RS
+.BR $ " sudo python3 postgre.py -v"
+.br
+.BR $ " sudo python3 postgre.py --status"
+
+.SH EXIT STATUS
+If operating system isn`t CentOS, output will be the next:
+.RS
+.BR "[Not Supported] Sorry, but this script only works with CentOS."
+.br
+.PP
+.RE
+If run script without root, output will be the next:
+.RS
+.BR "[Root Needed] Run this script as root (sudo python3 postgre.py)."
+
+.SH BUGS
+No known bugs, yet :)
+
+.SH AUTHOR
+Vlad Savchuk (t.me/savchuk_vlad)
+
+.SH COPYRIGHT
+MIT License
+.PP
+Copyright (c) 2020 Vlad Savchuk
