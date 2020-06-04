@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import os
 import sys
 import time
@@ -50,7 +52,7 @@ def printf(text, color="", style="", end="\n"):
     print(color + style + text + TextFormat.reset, end=end)
 
 
-def _clear(delay=0, hard=False):
+def clear(delay=0, hard=False):
     """A simple function which clear terminal"""
 
     time.sleep(delay)
@@ -61,7 +63,7 @@ def _clear(delay=0, hard=False):
         os.system("clear")
 
 
-def _show_welcome(timeout=0, only_banner=False):
+def show_welcome(timeout=0, only_banner=False):
     """A simple function that show banner and greeting"""
 
     banner = r"""
@@ -88,7 +90,7 @@ def _show_welcome(timeout=0, only_banner=False):
     print()
 
 
-def _show_status():
+def show_status():
     """Print install\\running status into terminal"""
 
     printf("Status", style=TextFormat.bold)
@@ -115,10 +117,14 @@ def _show_status():
 def main_menu():
     """Function that show main menu and wait for user input"""
 
-    _show_welcome()
-    _show_status()
-    printf("Menu:", TextFormat.bold)
-    printf("  1. Install PostgreSQL server\n  2. Manage & Configure server\n  3. Delete server\n  q. Exit")
+    show_welcome()
+    show_status()
+    printf("Main menu:", TextFormat.bold)
+    printf("  1. Install PostgreSQL server\n"
+           "  2. Manage & Configure server\n"
+           "  3. Operations with databases\n"
+           "  4. Delete server\n"
+           "  q. Exit")
     return str(input(TextFormat.underline + TextFormat.bold + "Your choice" + TextFormat.reset + " >>> "))
 
 
@@ -132,21 +138,54 @@ def config_menu():
         menu_str += "  2. Restart server\n"
         menu_str += "  3. Disable autostart" if is_autorun() else "  3. Enable autostart"
         menu_str += "\n"
-        menu_str += "  4. Edit configuration file"
+        menu_str += "  4. Change \"postgres\" user password"
+        menu_str += "\n"
+        menu_str += "  5. Edit configuration file"
         menu_str += "\n"
         menu_str += "  0. Back (to Main menu)"
 
-        _clear()
-        _show_welcome()
-        _show_status()
-        printf("Manage & Configure menu:", TextFormat.bold)
+        clear()
+        show_welcome()
+        show_status()
+        printf("[Main menu]", end=" ")
+        printf("> Manage & Configure menu:", TextFormat.bold)
         printf(menu_str)
         return str(input(TextFormat.underline + TextFormat.bold + "Your choice" + TextFormat.reset + " >>> "))
-    _clear()
-    _show_welcome()
-    printf("[Not Installed] Install PostgreSQL first.", TextFormat.Colors.yellow,
-           TextFormat.bold)
-    _clear(3)
+    clear()
+    show_welcome()
+    printf("[Not Installed] Install PostgreSQL first.", TextFormat.Colors.yellow, TextFormat.bold)
+    clear(3)
+    return '0'
+
+
+def operations_menu():
+    """Function that show operations menu and wait for user input"""
+
+    if is_installed():
+        if is_running():
+            menu_str = ""
+            menu_str += "  1. Enter into psql like \"postgres\" user\n"
+            menu_str += "  2. Show users\n"
+            menu_str += "  3. Show databases\n"
+            menu_str += "  4. Show tables in database\n"
+            menu_str += "  0. Back (to Main menu)"
+
+            clear()
+            show_welcome()
+            printf("[Main menu]", end=" ")
+            printf("> Operations menu:", TextFormat.bold)
+            printf(menu_str)
+            return str(input(TextFormat.underline + TextFormat.bold + "Your choice" + TextFormat.reset + " >>> "))
+        else:
+            clear()
+            show_welcome()
+            printf("[Not Running] Start PostgreSQL server first.", TextFormat.Colors.yellow, TextFormat.bold)
+    else:
+        clear()
+        show_welcome()
+        printf("[Not Installed] Install PostgreSQL first.", TextFormat.Colors.yellow, TextFormat.bold)
+
+    clear(3)
     return '0'
 
 
@@ -236,12 +275,12 @@ def install():
     if not is_installed():
 
         send_notify("Installation started..")
-        _clear()
+        clear()
         print_progress_bar(0, 4)
         printf(" · Installing postgresql-server package from yum...\n", TextFormat.Colors.lightblue)
         cmd("sudo yum -y install postgresql-server")
 
-        _clear(3)
+        clear(3)
         print_progress_bar(1, 4)
         printf(" · Installing postgresql-server package from yum...", TextFormat.Colors.lightblue, end=" ")
         printf("Done.", TextFormat.Colors.green, TextFormat.bold)
@@ -249,7 +288,7 @@ def install():
         printf(" · Initializing database...\n", TextFormat.Colors.lightblue)
         cmd("sudo postgresql-setup --initdb")
 
-        _clear(3)
+        clear(3)
         print_progress_bar(2, 4)
         printf(" · Installing postgresql-server package from yum...", TextFormat.Colors.lightblue, end=" ")
         printf("Done.", TextFormat.Colors.green, TextFormat.bold)
@@ -259,7 +298,7 @@ def install():
         printf(" · Starting service...\n", TextFormat.Colors.lightblue)
         cmd("sudo systemctl start postgresql")
 
-        _clear(3)
+        clear(3)
         print_progress_bar(3, 4)
         printf(" · Installing postgresql-server package from yum...", TextFormat.Colors.lightblue, end=" ")
         printf("Done.", TextFormat.Colors.green, TextFormat.bold)
@@ -268,11 +307,11 @@ def install():
         printf(" · Starting service...", TextFormat.Colors.lightblue, end=" ")
         printf("Done.", TextFormat.Colors.green, TextFormat.bold)
         time.sleep(1)
-        printf(" · Configuring PostgreSQL to start on every system reboot automatically...\n",
+        printf(" · Configuring PostgreSQL to start on every system boot automatically...\n",
                TextFormat.Colors.lightblue)
         cmd("sudo systemctl enable postgresql")
 
-        _clear(3)
+        clear(3)
         print_progress_bar(4, 4)
         printf(" · Installing postgresql-server package from yum...", TextFormat.Colors.lightblue,
                end=" ")
@@ -281,20 +320,20 @@ def install():
         printf("Done.", TextFormat.Colors.green, TextFormat.bold)
         printf(" · Starting service...", TextFormat.Colors.lightblue, end=" ")
         printf("Done.", TextFormat.Colors.green, TextFormat.bold)
-        printf(" · Configuring PostgreSQL to start on every system reboot automatically...",
+        printf(" · Configuring PostgreSQL to start on every system boot automatically...",
                TextFormat.Colors.lightblue, end=" ")
         printf("Done.", TextFormat.Colors.green, TextFormat.bold)
         time.sleep(1)
         print()
         printf("Successfully installed!", TextFormat.Colors.green, TextFormat.bold)
         send_notify("Successfully installed!")
-        _clear(3)
+        clear(3)
 
     else:
-        _clear()
-        _show_welcome()
+        clear()
+        show_welcome()
         printf("PostgreSQL already installed!", TextFormat.Colors.green, TextFormat.bold)
-        _clear(3)
+        clear(3)
 
 
 def config(choice):
@@ -326,6 +365,10 @@ def config(choice):
             time.sleep(1)
 
     elif choice == '4':
+        os.system("sudo passwd postgres")
+        time.sleep(3)
+
+    elif choice == '5':
         if os.system("sudo ls /var/lib/pgsql/data | grep postresql.conf") != "":
             printf("Opening configuration file..", TextFormat.Colors.lightblue)
             time.sleep(1)
@@ -333,7 +376,40 @@ def config(choice):
         else:
             printf("[Not Exist] Configuration file not exist, try to reinstall.", TextFormat.Colors.yellow)
 
-    _clear()
+    clear()
+
+
+def operations(choice):
+    """Operations with PostgreSQL"""
+
+    printf("Entering into psql..\n", TextFormat.Colors.lightblue)
+    clear(1)
+
+    if choice == '1':
+        os.system("sudo su - postgres -c \"psql\"")
+        printf("Exited from psql.", TextFormat.Colors.lightblue)
+        time.sleep(1)
+
+    elif choice == '2':
+        db_list = os.popen("sudo su - postgres -c \"psql -c \\\"\\\\du\\\"\"").read()
+        printf(db_list, TextFormat.Colors.orange)
+        input("Press <Enter>..")
+
+    elif choice == '3':
+        db_list = os.popen("sudo su - postgres -c \"psql -l\"").read()
+        printf(db_list, TextFormat.Colors.orange)
+        input("Press <Enter>..")
+
+    elif choice == '4':
+        db_list = os.popen("sudo su - postgres -c \"psql -l\"").read()
+        printf(db_list, TextFormat.Colors.orange)
+        db_name = input("Choose database (enter name) >>> ")
+        os.system("sudo su - postgres -c \"psql -c \\\"\\\\c " + db_name + "\\\"\"")
+        db_list = os.popen("sudo su - postgres -c \"psql -c \\\"\\\\dt\\\"\"").read()
+        printf(db_list, TextFormat.Colors.orange)
+        input("Press <Enter>..")
+
+    clear()
 
 
 def remove():
@@ -344,10 +420,10 @@ def remove():
         answer = str(input("[y,n] >>> "))
         if (answer.lower() == 'y') | (answer.lower() == 'n'):
             send_notify("Removing PostgreSQL..")
-            _clear()
+            clear()
             printf(" · Removing postgresql-server package...\n", TextFormat.Colors.lightblue)
             cmd("sudo yum -y remove postgresql-server")
-            _clear(3)
+            clear(3)
             printf(" · Removing postgresql-server package...", TextFormat.Colors.lightblue, end=" ")
             printf("Done.", TextFormat.Colors.green, TextFormat.bold)
             time.sleep(1)
@@ -355,7 +431,7 @@ def remove():
             if answer.lower() == 'n':
                 printf(" · Removing configurations from /var/lib/pgsql ...\n", TextFormat.Colors.lightblue)
                 cmd("sudo rm -rf /var/lib/pgsql/*")
-                _clear(3)
+                clear(3)
                 printf(" · Removing postgresql-server package...", TextFormat.Colors.lightblue, end=" ")
                 printf("Done.", TextFormat.Colors.green, TextFormat.bold)
                 printf(" · Removing configurations from /var/lib/pgsql ...", TextFormat.Colors.lightblue, end=" ")
@@ -365,16 +441,16 @@ def remove():
 
             printf("All done!", TextFormat.Colors.green, TextFormat.bold)
             send_notify("Successfully removed!")
-            _clear(3)
+            clear(3)
         else:
             printf("[Cancelled] Removing aborted.", TextFormat.Colors.lightblue, TextFormat.bold)
-            _clear(3)
+            clear(3)
     else:
-        _clear()
-        _show_welcome()
+        clear()
+        show_welcome()
         printf("[Not Installed] Can`t remove PostgreSQL, because it is not installed!", TextFormat.Colors.yellow,
                TextFormat.bold)
-        _clear(3)
+        clear(3)
 
 
 def entry_point():
@@ -385,10 +461,10 @@ def entry_point():
         main()
 
     elif sys.argv.__contains__("--status") | sys.argv.__contains__("-s"):
-        _show_status()
+        show_status()
 
     elif sys.argv.__contains__("--author") | sys.argv.__contains__("-a"):
-        _show_welcome(only_banner=True)
+        show_welcome(only_banner=True)
         printf("If you have any questions or suggestions,\nfeel free to write me here: t.me/savchuk_vlad.")
 
     elif sys.argv.__contains__("--version") | sys.argv.__contains__("-V"):
@@ -471,28 +547,37 @@ Copyright (c) 2020 Vlad Savchuk
 
 def main():
     try:
-        if is_centos():
-            if is_root():
-                _clear()
+        if not is_centos():
+            if not is_root():
+                clear()
                 while True:
                     choice = main_menu()
                     if choice == '1':
                         install()
+
                     elif choice == '2':
                         while True:
                             choice = config_menu()
                             config(choice)
                             if choice == '0':
                                 break
-                    elif choice == '3':
-                        remove()
-                    elif choice == 'q':
-                        exit()
-                    else:
-                        _clear()
 
-                    if choice.lower() == 'q':
+                    elif choice == '3':
+                        while True:
+                            choice = operations_menu()
+                            operations(choice)
+                            if choice == '0':
+                                break
+
+                    elif choice == '4':
+                        remove()
+
+                    elif choice.lower() == 'q':
+                        clear()
                         break
+
+                    else:
+                        clear()
 
     except KeyboardInterrupt:
         printf("\n[EXIT] Script exited by user.", TextFormat.Colors.red, TextFormat.bold)
