@@ -11,5 +11,3 @@ You can quickly **run** this script with the following command:
 If you want **only save** this script in your machine - run this:
 
     wget -O postgre.py https://git.io/JfXSf
-
-### *Copyright (c) 2020 Vlad Savchuk*
