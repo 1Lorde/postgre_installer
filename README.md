@@ -6,7 +6,7 @@
 
 You can quickly **run** this script with the following command:
 
-    sudo su -c "python3 <(wget -q https://git.io/JfXSf)"
+    sudo su -c "python3 <(wget -qO- https://git.io/JfXSf)"
 
 If you want **only save** this script in your machine - run this:
 
