@@ -212,7 +212,7 @@ def print_progress_bar(iteration, total, prefix='Progress:', suffix='Complete',
 def send_notify(message):
     """Function which send graphical notification"""
 
-    os.system("sudo -u $USER DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1000/bus notify-send -t 3000 -a "
+    os.system("sudo -u $USER DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1000/bus notify-send -a "
               "terminal \"PostgreSQL - Installation Script\" \"" + message + "\"")
 
 
@@ -372,7 +372,7 @@ def config(choice):
         if os.system("sudo ls /var/lib/pgsql/data | grep postresql.conf") != "":
             printf("Opening configuration file..", TextFormat.Colors.lightblue)
             time.sleep(1)
-            cmd("sudo nano /var/lib/pgsql/data/postgresql.conf")
+            os.system("sudo nano /var/lib/pgsql/data/postgresql.conf")
         else:
             printf("[Not Exist] Configuration file not exist, try to reinstall.", TextFormat.Colors.yellow)
 
@@ -382,10 +382,9 @@ def config(choice):
 def operations(choice):
     """Operations with PostgreSQL"""
 
-    printf("Entering into psql..\n", TextFormat.Colors.lightblue)
-    clear(1)
-
     if choice == '1':
+        printf("Entering into psql..\n", TextFormat.Colors.lightblue)
+        clear(1)
         os.system("sudo su - postgres -c \"psql\"")
         printf("Exited from psql.", TextFormat.Colors.lightblue)
         time.sleep(1)
@@ -547,8 +546,8 @@ Copyright (c) 2020 Vlad Savchuk
 
 def main():
     try:
-        if not is_centos():
-            if not is_root():
+        if is_centos():
+            if is_root():
                 clear()
                 while True:
                     choice = main_menu()
