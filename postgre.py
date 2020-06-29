@@ -99,17 +99,26 @@ def show_status():
     if is_installed():
         printf("\t⚫ ", TextFormat.Colors.green, TextFormat.bold, end="")
         printf("Yes", TextFormat.Colors.green, TextFormat.bold)
+
+        print("------------------------")
+        printf("⬧ Running:", end="")
+        if is_running():
+            printf("\t⚫ ", TextFormat.Colors.green, TextFormat.bold, end="")
+            printf("Yes", TextFormat.Colors.green, style=TextFormat.bold)
+        else:
+            printf("\t⚫ ", TextFormat.Colors.red, TextFormat.bold, end="")
+            printf("No", TextFormat.Colors.red, style=TextFormat.bold)
+        print("------------------------")
+        printf("⬧ Autorun:", end="")
+        if is_autorun():
+            printf("\t⚫ ", TextFormat.Colors.green, TextFormat.bold, end="")
+            printf("On", TextFormat.Colors.green, style=TextFormat.bold)
+        else:
+            printf("\t⚫ ", TextFormat.Colors.red, TextFormat.bold, end="")
+            printf("Off", TextFormat.Colors.red, style=TextFormat.bold)
     else:
         printf("\t⚫ ", TextFormat.Colors.red, TextFormat.bold, end="")
         printf("No", TextFormat.Colors.red, TextFormat.bold)
-    print("------------------------")
-    printf("⬧ Running:", end="")
-    if is_running():
-        printf("\t⚫ ", TextFormat.Colors.green, TextFormat.bold, end="")
-        printf("Yes", TextFormat.Colors.green, style=TextFormat.bold)
-    else:
-        printf("\t⚫ ", TextFormat.Colors.red, TextFormat.bold, end="")
-        printf("No", TextFormat.Colors.red, style=TextFormat.bold)
     print("========================")
     print()
 
