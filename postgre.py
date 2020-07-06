@@ -41,7 +41,7 @@ def cmd(command):
     """Execute command in quiet/verbose mode and log output into file"""
 
     if VERBOSE_MODE:
-        os.system(command + " | tee " + LOGFILE_NAME)
+        os.system(command + " | tee -a " + LOGFILE_NAME)
     else:
         os.system(command + " &>> " + LOGFILE_NAME)
 
