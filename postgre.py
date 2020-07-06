@@ -401,21 +401,23 @@ def operations(choice):
     elif choice == '2':
         db_list = os.popen("sudo su - postgres -c \"psql -c \\\"\\\\du\\\"\"").read()
         printf(db_list, TextFormat.Colors.orange)
-        input("Press <Enter>..")
+        input("Press <Enter> to continue..")
 
     elif choice == '3':
         db_list = os.popen("sudo su - postgres -c \"psql -l\"").read()
         printf(db_list, TextFormat.Colors.orange)
-        input("Press <Enter>..")
+        input("Press <Enter> to continue..")
 
     elif choice == '4':
         db_list = os.popen("sudo su - postgres -c \"psql -l\"").read()
         printf(db_list, TextFormat.Colors.orange)
         db_name = input("Choose database (enter name) >>> ")
-        os.system("sudo su - postgres -c \"psql -c \\\"\\\\c " + db_name + "\\\"\"")
-        db_list = os.popen("sudo su - postgres -c \"psql -c \\\"\\\\dt\\\"\"").read()
-        printf(db_list, TextFormat.Colors.orange)
-        input("Press <Enter>..")
+        tables_list = os.popen("sudo su - postgres -c \"psql -c \\\"\\\\c " + db_name + "\\\" -c \\\"\\\\dt\\\"\"").read()
+        printf(tables_list, TextFormat.Colors.orange)
+        table_name = input("Choose table (enter name) >>> ")
+        table_content = os.popen("sudo su - postgres -c \"psql -c \\\"\\\\c " + db_name + "\\\" -c \\\"SELECT * FROM " + table_name + ";\\\"\"").read()
+        printf(table_content, TextFormat.Colors.orange)
+        input("Press <Enter> to continue..")
 
     clear()
 
